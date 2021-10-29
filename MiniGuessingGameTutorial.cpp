@@ -7,8 +7,6 @@ using namespace std;
 constexpr int g_kPlayMenu = 1;
 constexpr int g_kQuitMenu = 2;
 
-constexpr int g_kMaxGuesses = 5;
-
 //constant values for Gender Menu
 constexpr int g_kMaleGender = 1;
 constexpr int g_kFemaleGender = 2;
@@ -23,7 +21,7 @@ int GetAge();
 string GenerateNickname(int gender, int age);
 int GetGuess(int turn, string nickname);
 bool ReviewGuess(int guess, int randomNumber);
-void DisplayGameOver(int randomNumber, string nickname);
+void DisplayGameOver(int randomNumber, string nickname,int tries);
 
 int main()
 {
@@ -69,7 +67,7 @@ int DisplayWelcomeMessage()
     {
         //Display welcome message
         cout << "-----------------Welcome to the Super Amazing Guessing Game--------------------" << endl;
-        cout << "          You have " << g_kMaxGuesses << " guesses to correctly guess the correct number between 1 and 20. " << endl;
+        cout << "          You have infinite guesses to correctly guess the correct number between 1 and 20. " << endl;
         cout << "          \n1)Play Now" << endl;
         cout << "          2} Quit" << endl;
         cout << "          \n Press 1 or 2: ";
@@ -125,21 +123,23 @@ void PlayGame()
                  << randomNumber << endl;
 
             bool guessCorrect = false;
-            for (int i = 0; i < g_kMaxGuesses; i++)
+
+            int tries = 1;
+
+            do
             {
-                int guess = GetGuess(i + 1, nickname);
+                int guess = GetGuess(tries, nickname);
                 bool guessCorrect = ReviewGuess(guess, randomNumber);
 
                 if (guessCorrect)
                 {
                     break;
                 }
-            }
-            //test for commit 
-            if (guessCorrect == false)
-            {
-                DisplayGameOver(randomNumber, nickname);
-            }
+                tries++;
+
+            }while(!guessCorrect);
+
+            DisplayGameOver(randomNumber, nickname,tries);
             isGameOver = true;
         }
         else
@@ -304,8 +304,8 @@ bool ReviewGuess(int guess, int randomNumber)
         return false;
     }
 }
-void DisplayGameOver(int randomNumber, string nickname)
+void DisplayGameOver(int randomNumber, string nickname,int tries)
 {
-    cout << "Too bad " << nickname << ", you're all out of luck! The correct number was: " << randomNumber << endl;
+    cout << "Good job " << nickname << "! It took you " << tries << " tries to guess the number " << randomNumber << "." << endl;
     DisplayMessage("Better luck next time!");
 }
